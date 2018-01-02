@@ -2,20 +2,24 @@
     "compilerOptions": {
         "target": "es5",
         "module": "es2015",
+        "outDir": "dist",
         "moduleResolution": "node",
+        "baseUrl": "./",
         "lib": [
-          "es2015", "dom"  
+          "es2017", "dom"  
         ],
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "sourceMap": true,
-        "noEmit": true,
+        "noEmit": false, // important for aot angulat 5
         "inlineSources": true
     },
     "include": [
         "src/**/*.ts"
     ],
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "test.ts",
+        "**/*.spec.ts"
     ]
 }

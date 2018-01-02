@@ -1,7 +1,7 @@
 const webpack = require('webpack');
-const AotPlugin = require('@ngtools/webpack').AotPlugin;
+// const AotPlugin = require('@ngtools/webpack').AotPlugin;
 const helpers = require('./helpers');
-
+const  AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
 module.exports = (envOptions) => {
     envOptions = envOptions || {};
     const config = {
@@ -17,21 +17,39 @@ module.exports = (envOptions) => {
         },
         module: {
             rules: [
+                {
+                    "test": /\.ts$/,
+                    "loader": "@ngtools/webpack"
+                  },
                 { test: /\.html$/, loader: 'raw-loader' },
                 { test: /\.css$/, loader: 'raw-loader' },
             ]
         },
-        devtool: '#source-map',
+        devtool: 'source-map',
+        "node": {
+            "fs": "empty",
+            "global": true,
+            "crypto": "empty",
+            "tls": "empty",
+            "net": "empty",
+            "process": true,
+            "module": false,
+            "clearImmediate": false,
+            "setImmediate": false
+          },
+        "devServer": {
+            "historyApiFallback": true
+          }
     };
-    if (envOptions.MODE === 'prod') {
-        config.module.rules.push(
-            { test: /\.ts$/, loaders: ['@ngtools/webpack'] }
-        );
+    if (true) {
         config.plugins = [
-            new AotPlugin({
-                tsConfigPath: './tsconfig.json',
-                entryModule: helpers.root('src/app/app.module#AppModule')
-            }),
+            new AngularCompilerPlugin({
+                "mainPath": "./src/main.ts",
+                "platform": 0,
+                "sourceMap": true,
+                "tsConfigPath": './tsconfig.json',
+                "skipCodeGeneration": false,
+              }),
             new webpack.optimize.UglifyJsPlugin({
                 beautify: false,
                 mangle: {
@@ -45,17 +63,6 @@ module.exports = (envOptions) => {
                 comments: false
             }),
         ];
-    } else {
-        config.module.rules.push(
-            {
-                test: /\.ts$/,
-                loaders: [
-                    'awesome-typescript-loader',
-                    'angular2-template-loader',
-                    'angular-router-loader'
-                ]
-            }
-        );
     }
     return config;
 };
